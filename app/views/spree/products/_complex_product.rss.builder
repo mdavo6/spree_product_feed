@@ -62,6 +62,7 @@ unless product.product_properties.blank?
   xml << render(partial: "props", locals: {product: product})
 end
 
-xml.tag! "shipping_weight", "#{variant.weight.to_i} g"
+# Remove shipping_weight to prevent shipping error
+# xml.tag! "shipping_weight", "#{variant.weight.to_i} g"
 xml.tag! "custom_label_0", collection.value if collection
 xml.tag! "custom_label_1", product.name
