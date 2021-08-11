@@ -4,7 +4,9 @@ google_merchant_color            = Spree::Property.where(name: "Resin Colour").f
 collection = product.product_properties.where(property_id: product_collection.id).first               if product_collection
 color      = product.product_properties.where(property_id: google_merchant_color.id).first            if google_merchant_color
 
-xml.tag!("g:id", current_store.id.to_s + "-" + product.id.to_s)
+taxon = product.taxons.first
+taxon_path = taxon.permalink
+taxon_path = taxon_path.gsub("/"," > ")
 
 product.meta_title.blank? ? xml.tag!("g:title", product.name) : xml.tag!("g:title", product.meta_title)
 
@@ -15,7 +17,6 @@ unless product.property("g:description").present?
 end
 
 xml.tag!("g:link", spree.product_url(product))
-xml.tag!("g:brand", "BoldB")
 
 unless product.images.empty?
   product.images.each_with_index do |image, index|
@@ -27,9 +28,9 @@ unless product.images.empty?
   end
 end
 
-xml.tag!("color", color.value) if color
-
+xml.tag!("g:brand", "BoldB")
 xml.tag!("g:availability", product.in_stock? ? "in stock" : "out of stock")
+
 if defined?(product.compare_at_price) && !product.compare_at_price.nil?
   if product.compare_at_price > product.price
     xml.tag!("g:price", product.compare_at_price.to_s + " " + current_currency)
@@ -40,8 +41,11 @@ if defined?(product.compare_at_price) && !product.compare_at_price.nil?
 else
   xml.tag!("g:price", product.price_in(current_currency).amount.to_s + " " + current_currency)
 end
+
 xml.tag!("g:" + product.unique_identifier_type, product.unique_identifier)
 xml.tag!("g:sku", structured_sku(product))
+xml.tag!("g:product_type", taxon_path)
+xml.tag!("g:id", structured_sku(product))
 xml.tag!("g:condition", "new")
 
 unless product.product_properties.blank?

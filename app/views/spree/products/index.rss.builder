@@ -6,7 +6,7 @@ xml.rss("xmlns:g" => "http://base.google.com/ns/1.0", :version => "2.0") {
   xml.channel {
     xml.title(current_store.name)
     xml.link(current_store.url)
-    xml.description("Find out about new products first! Always be in the know when new products become available")
+    xml.description("RSS feed of our unique jewellery")
 
     if defined?(current_store.default_locale) && !current_store.default_locale.nil?
       xml.language(current_store.default_locale.downcase)

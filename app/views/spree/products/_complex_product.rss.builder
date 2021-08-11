@@ -1,15 +1,34 @@
-xml.tag!("g:id", (current_store.id.to_s + "-" + product.id.to_s + "-" + variant.id.to_s).downcase)
+product_collection               = Spree::Property.where(name: "Collection").first
+google_merchant_color            = Spree::Property.where(name: "Resin Colour").first
 
-unless product.property("g:title").present?
-  xml.tag!("g:title", product.name)
-end
+collection = product.product_properties.where(property_id: product_collection.id).first               if product_collection
+color      = product.product_properties.where(property_id: google_merchant_color.id).first            if google_merchant_color
+
+taxon = product.taxons.first
+taxon_path = taxon.permalink
+taxon_path = taxon_path.gsub("/"," > ")
+
+product.meta_title.blank? ? xml.tag!("g:title", product.name) : xml.tag!("g:title", product.meta_title)
 
 unless product.property("g:description").present?
-  xml.tag!("g:description", product.meta_description)
+  # Change meta_description to description
+  # xml.tag!("g:description", product.meta_description)
+  xml.tag!("g:description", product.description)
 end
 
-xml.tag!("g:link", spree.product_url(product) + "?variant=" + variant.id.to_s)
-xml.tag!("g:image_link", structured_images(variant))
+xml.tag!("g:link", spree.product_url(product))
+
+unless variant.images.empty?
+  variant.images.each_with_index do |image, index|
+    if index == 0
+      xml.tag!("g:image_link", structured_images(variant))
+    else
+      xml.tag!("additional_image_link", main_app.rails_blob_url(image.attachment))
+    end
+  end
+end
+
+xml.tag!("g:brand", "BoldB")
 xml.tag!("g:availability", variant.in_stock? ? "in stock" : "out of stock")
 
 if defined?(variant.compare_at_price) && !variant.compare_at_price.nil?
@@ -25,12 +44,15 @@ end
 
 xml.tag!("g:" + variant.unique_identifier_type, variant.unique_identifier)
 xml.tag!("g:sku", variant.sku)
-xml.tag!("g:item_group_id", (current_store.id.to_s + "-" + product.id.to_s).downcase)
+xml.tag!("g:product_type", taxon_path)
+xml.tag!("g:id", variant.sku)
+xml.tag!("g:condition", "new")
+xml.tag!("g:item_group_id", product.sku)
 
 options_xml_hash = Spree::Variants::XmlFeedOptionsPresenter.new(variant).xml_options
 options_xml_hash.each do |ops|
   if ops.option_type[:name] == "color"
-    xml.tag!("g:" + ops.option_type.presentation.downcase, ops.name)
+    xml.tag!("g:color", ops.name)
   else
     xml.tag!("g:" + ops.option_type.presentation.downcase, ops.presentation)
   end
@@ -39,3 +61,7 @@ end
 unless product.product_properties.blank?
   xml << render(partial: "props", locals: {product: product})
 end
+
+xml.tag! "shipping_weight", "#{variant.weight.to_i} g"
+xml.tag! "custom_label_0", collection.value if collection
+xml.tag! "custom_label_1", product.name
