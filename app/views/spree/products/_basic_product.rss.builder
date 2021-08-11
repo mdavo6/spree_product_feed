@@ -1,14 +1,34 @@
+product_collection               = Spree::Property.where(name: "Collection").first
+google_merchant_color            = Spree::Property.where(name: "Resin Colour").first
+
+collection = product.product_properties.where(property_id: product_collection.id).first               if product_collection
+color      = product.product_properties.where(property_id: google_merchant_color.id).first            if google_merchant_color
+
 xml.tag!("g:id", current_store.id.to_s + "-" + product.id.to_s)
 
-unless product.property("g:title").present?
-  xml.tag!("g:title", product.name)
-end
+product.meta_title.blank? ? xml.tag!("g:title", product.name) : xml.tag!("g:title", product.meta_title)
+
 unless product.property("g:description").present?
-  xml.tag!("g:description", product.meta_description)
+  # Change meta_description to description
+  # xml.tag!("g:description", product.meta_description)
+  xml.tag!("g:description", product.description)
 end
 
 xml.tag!("g:link", spree.product_url(product))
-xml.tag!("g:image_link", structured_images(product))
+xml.tag!("g:brand", "BoldB")
+
+unless product.images.empty?
+  product.images.each_with_index do |image, index|
+    if index == 0
+      xml.tag!("g:image_link", structured_images(product))
+    else
+      xml.tag!("additional_image_link", main_app.rails_blob_url(image.attachment))
+    end
+  end
+end
+
+xml.tag!("color", color.value) if color
+
 xml.tag!("g:availability", product.in_stock? ? "in stock" : "out of stock")
 if defined?(product.compare_at_price) && !product.compare_at_price.nil?
   if product.compare_at_price > product.price
@@ -22,7 +42,12 @@ else
 end
 xml.tag!("g:" + product.unique_identifier_type, product.unique_identifier)
 xml.tag!("g:sku", structured_sku(product))
+xml.tag!("g:condition", "new")
 
 unless product.product_properties.blank?
   xml << render(partial: "props", locals: {product: product})
 end
+
+xml.tag! "shipping_weight", "#{product.weight.to_i} g"
+xml.tag! "custom_label_0", collection.value if collection
+xml.tag! "custom_label_1", product.name
