@@ -1,3 +1,5 @@
+current_currency = "AUD"
+
 product_collection               = Spree::Property.where(name: "Collection").first
 google_merchant_color            = Spree::Property.where(name: "Resin Colour").first
 
@@ -16,7 +18,7 @@ unless product.property("g:description").present?
   xml.tag!("g:description", product.description)
 end
 
-xml.tag!("g:link", spree.product_url(product))
+xml.tag!("g:link", current_store.url + '/products/' + product.slug)
 
 unless product.images.empty?
   product.images.each_with_index do |image, index|
