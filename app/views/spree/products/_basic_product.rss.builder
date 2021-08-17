@@ -46,7 +46,13 @@ end
 
 xml.tag!("g:" + product.unique_identifier_type, product.unique_identifier)
 xml.tag!("g:sku", structured_sku(product))
-xml.tag!("g:google_product_category", taxon.google_product_category) if product.taxons.first.google_product_category.present?
+
+if product.has_google_product_category?
+  google_product_property = Spree::Property.where(name: "Google Product Category").first
+  google_product_category = product.product_properties.where(property_id: google_product_property.id).first
+  xml.tag!("g:google_product_category", google_product_category.value)
+end
+
 xml.tag!("g:product_type", taxon_path)
 xml.tag!("g:id", structured_sku(product))
 xml.tag!("g:condition", "new")
