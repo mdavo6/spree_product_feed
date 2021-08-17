@@ -59,6 +59,12 @@ if product.has_gender_property?
   xml.tag!("g:gender", gender.value)
 end
 
+if product.has_age_group_property?
+  age_group_property = Spree::Property.where(name: "Age Group").first
+  age_group = product.product_properties.where(property_id: age_group_property.id).first
+  xml.tag!("g:age_group", age_group.value)
+end
+
 if product.has_size_property?
   size_property = Spree::Property.where(name: "Size").first
   size = product.product_properties.where(property_id: size_property.id).first
