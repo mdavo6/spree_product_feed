@@ -54,6 +54,18 @@ if product.has_google_product_category?
   xml.tag!("g:google_product_category", google_product_category.value)
 end
 
+if product.has_gender_property?
+  gender_property = Spree::Property.where(name: "Gender").first
+  gender = product.product_properties.where(property_id: gender_property.id).first
+  xml.tag!("g:gender", gender.value)
+end
+
+if product.has_size_property?
+  size_property = Spree::Property.where(name: "Size").first
+  size = product.product_properties.where(property_id: size_property.id).first
+  xml.tag!("g:size", size.value)
+end
+
 xml.tag!("g:product_type", taxon_path)
 xml.tag!("g:id", variant.sku)
 xml.tag!("g:condition", "new")
