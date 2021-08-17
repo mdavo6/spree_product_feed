@@ -12,10 +12,10 @@ taxon_path = taxon_path.gsub("/"," > ")
 
 product.meta_title.blank? ? xml.tag!("g:title", product.name) : xml.tag!("g:title", product.meta_title)
 
-unless product.property("g:description").present?
-  # Change meta_description to description
-  # xml.tag!("g:description", product.meta_description)
-  xml.tag!("g:description", product.description)
+if product.meta_description.present?
+  xml.tag!("g:description", product.meta_description)
+else
+  xml.tag!("g:description", strip_tags(product.description))
 end
 
 xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug)
@@ -46,6 +46,7 @@ end
 
 xml.tag!("g:" + variant.unique_identifier_type, variant.unique_identifier)
 xml.tag!("g:sku", variant.sku)
+xml.tag!("g:google_product_category", taxon.google_product_category) if product.taxons.first.google_product_category.present?
 xml.tag!("g:product_type", taxon_path)
 xml.tag!("g:id", variant.sku)
 xml.tag!("g:condition", "new")
