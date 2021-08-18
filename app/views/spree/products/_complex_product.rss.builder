@@ -86,7 +86,38 @@ xml.tag!("g:item_group_id", product.sku)
 options_xml_hash = Spree::Variants::XmlFeedOptionsPresenter.new(variant).xml_options
 options_xml_hash.each do |ops|
   if ops.option_type[:name] == "color"
-    xml.tag!("g:color", ops.name)
+    # Necklaces
+    if product.has_necklace_material_property?
+      necklace_material_property = Spree::Property.where(name: "Necklace Material").first
+      necklace_material = product.product_properties.where(property_id: necklace_material_property.id).first
+      if necklace_material.value.downcase.include?("cord")
+        if ops.name == "Aqua"
+          xml.tag!("g:color", "light blue/light brown")
+        elsif ops.name == "Ultramarine"
+          xml.tag!("g:color", "dark blue/light brown")
+        end
+      elsif necklace_material.value.downcase.include?("chain")
+        if ops.name == "Aqua"
+          xml.tag!("g:color", "light blue/silver")
+        elsif ops.name == "Ultramarine"
+          xml.tag!("g:color", "dark blue/silver")
+        end
+      end
+    # Earrings
+    elsif product.has_google_product_category? && google_product_category.value == "194"
+      if ops.name == "Aqua"
+        xml.tag!("g:color", "light blue/silver")
+      elsif ops.name == "Ultramarine"
+        xml.tag!("g:color", "dark blue/silver")
+      end
+    end
+  # Bangle
+  elsif ops.option_type[:name] == "Bangle"
+    if ops.name.include?("Aqua")
+      xml.tag!("g:color", "light blue")
+    elsif ops.name.include?("Ultramarine")
+      xml.tag!("g:color", "dark blue")
+    end
   else
     xml.tag!("g:" + ops.option_type.presentation.downcase, ops.presentation)
   end
