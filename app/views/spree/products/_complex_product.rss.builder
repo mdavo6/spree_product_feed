@@ -110,6 +110,13 @@ options_xml_hash.each do |ops|
       elsif ops.name == "Ultramarine"
         xml.tag!("g:color", "dark blue/silver")
       end
+    # Rings
+    elsif product.has_google_product_category? && google_product_category.value == "200"
+      if ops.name == "Aqua"
+        xml.tag!("g:color", "light blue")
+      elsif ops.name == "Ultramarine"
+        xml.tag!("g:color", "dark blue")
+      end
     end
   # Bangle
   elsif ops.option_type[:name] == "Bangle"
