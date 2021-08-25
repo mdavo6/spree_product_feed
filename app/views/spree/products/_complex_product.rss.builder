@@ -125,6 +125,11 @@ options_xml_hash.each do |ops|
     elsif ops.name.include?("Ultramarine")
       xml.tag!("g:color", "dark blue")
     end
+    if ops.name.include?("Small")
+      xml.tag!("g:size", "S")
+    elsif ops.name.include?("Large")
+      xml.tag!("g:size", "L")
+    end
   else
     xml.tag!("g:" + ops.option_type.presentation.downcase, ops.presentation)
   end
