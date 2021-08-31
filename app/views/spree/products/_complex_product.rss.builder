@@ -23,9 +23,9 @@ xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug)
 unless variant.images.empty?
   variant.images.each_with_index do |image, index|
     if index == 0
-      xml.tag!("g:image_link", structured_images(variant))
+      xml.tag!("g:image_link", structured_feed_images(variant))
     else
-      xml.tag!("additional_image_link", main_app.rails_blob_url(image.attachment))
+      xml.tag!("additional_image_link", image.attachment.service_url)
     end
   end
 end
