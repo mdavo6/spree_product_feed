@@ -18,7 +18,7 @@ else
   xml.tag!("g:description", strip_tags(product.description))
 end
 
-xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug)
+xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug + '?currency=AUD')
 
 unless product.images.empty?
   product.images.each_with_index do |image, index|
