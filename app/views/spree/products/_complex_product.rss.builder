@@ -25,7 +25,7 @@ unless variant.images.empty?
     if index == 0
       xml.tag!("g:image_link", structured_feed_images(variant))
     else
-      xml.tag!("additional_image_link", image.attachment.service_url)
+      xml.tag!("additional_image_link", main_app.rails_blob_url(image.attachment))
     end
   end
 end
