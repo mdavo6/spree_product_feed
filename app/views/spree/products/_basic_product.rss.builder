@@ -24,11 +24,11 @@ unless product.images.empty?
   product.images.each_with_index do |image, index|
     if index == 0
       structured_feed_images_url = structured_feed_images(product).to_s
-      structured_feed_images_url.end_with?("USD") ? structured_feed_images_url.slice(-13,13) : structured_feed_images_url
+      structured_feed_images_url.end_with?("USD") ? structured_feed_images_url.slice!(-13,13) : structured_feed_images_url
       xml.tag!("g:image_link", structured_feed_images_url)
     else
       image_url = main_app.rails_blob_url(image.attachment).to_s
-      image_url.end_with?("USD") ? image_url.slice(-13,13) : image_url
+      image_url.end_with?("USD") ? image_url.slice!(-13,13) : image_url
       xml.tag!("additional_image_link", image_url)
     end
   end
