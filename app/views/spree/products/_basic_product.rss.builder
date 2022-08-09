@@ -23,9 +23,13 @@ xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug 
 unless product.images.empty?
   product.images.each_with_index do |image, index|
     if index == 0
-      xml.tag!("g:image_link", structured_feed_images(product).to_s)
+      structured_feed_images_url = structured_feed_images(product).to_s
+      structured_feed_images_url.end_with?("USD") ? structured_feed_images_url.slice(-13,13) : structured_feed_images_url
+      xml.tag!("g:image_link", structured_feed_images_url)
     else
-      xml.tag!("additional_image_link", main_app.rails_blob_url(image.attachment).to_s)
+      image_url = main_app.rails_blob_url(image.attachment).to_s
+      image_url.end_with?("USD") ? image_url.slice(-13,13) : image_url
+      xml.tag!("additional_image_link", image_url)
     end
   end
 end
