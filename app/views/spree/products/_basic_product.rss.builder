@@ -27,7 +27,7 @@ unless product.images.empty?
       structured_feed_images_url.end_with?("USD") ? structured_feed_images_url.slice!(-13,13) : structured_feed_images_url
       xml.tag!("g:image_link", structured_feed_images_url)
     else
-      image_url = image.url(:large)).url
+      image_url = image.url(:large).url
       image_url.end_with?("USD") ? image_url.slice!(-13,13) : image_url
       xml.tag!("additional_image_link", image_url)
     end
