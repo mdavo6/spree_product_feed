@@ -23,11 +23,11 @@ xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug 
 unless variant.images.empty?
   variant.images.each_with_index do |image, index|
     if index == 0
-      structured_feed_images_url = structured_feed_images(variant).to_s
+      structured_feed_images_url = structured_feed_images(variant)
       structured_feed_images_url.end_with?("USD") ? structured_feed_images_url.slice!(-13,13) : structured_feed_images_url
       xml.tag!("g:image_link", structured_feed_images_url)
     else
-      image_url = main_app.url_for(image.url(:large)).to_s
+      image_url = image.url(:large)).url
       image_url.end_with?("USD") ? image_url.slice!(-13,13) : image_url
       xml.tag!("additional_image_link", image_url)
     end
