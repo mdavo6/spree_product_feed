@@ -18,7 +18,7 @@ else
   xml.tag!("g:description", strip_tags(product.description))
 end
 
-xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug + '?currency=AUD')
+xml.tag!("g:link", 'https://' + current_store.url + '/products/' + product.slug + '?currency=AUD&variant=' + variant.id.to_s)
 
 unless variant.images.empty?
   variant.images.each_with_index do |image, index|
@@ -147,3 +147,4 @@ end
 # xml.tag! "shipping_weight", "#{variant.weight.to_i} g"
 xml.tag! "custom_label_0", collection.value if collection
 xml.tag! "custom_label_1", product.name
+xml.tag! "custom_label_2", 'https://' + current_store.url + '/products/' + product.slug + '?currency=AUD&variant=' + variant.id.to_s

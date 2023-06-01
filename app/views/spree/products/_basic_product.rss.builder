@@ -93,3 +93,4 @@ end
 # xml.tag! "shipping_weight", "#{product.weight.to_i} g"
 xml.tag! "custom_label_0", collection.value if collection
 xml.tag! "custom_label_1", product.name
+xml.tag! "custom_label_2", 'https://' + current_store.url + '/products/' + product.slug + '?currency=AUD'
