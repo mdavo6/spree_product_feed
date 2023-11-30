@@ -6,7 +6,7 @@ google_merchant_color            = Spree::Property.where(name: "Resin Colour").f
 collection = product.product_properties.where(property_id: product_collection.id).first               if product_collection
 color      = product.product_properties.where(property_id: google_merchant_color.id).first            if google_merchant_color
 
-taxon = product.taxons.first
+taxon = product.taxons.for_store(current_store).first
 taxon_path = taxon.permalink
 taxon_path = taxon_path.gsub("/"," > ")
 
