@@ -11,7 +11,8 @@ module SpreeProductFeed
 
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), "../../app/**/*_decorator*.rb")).sort.each do |c|
-        Rails.configuration.cache_classes ? require(c) : load(c)
+        # Commented out to resolve per https://github.com/spree/deface/issues/76
+        # Rails.configuration.cache_classes ? require(c) : load(c)
       end
     end
 
